@@ -1,0 +1,17 @@
+.bsp
+.idea/
+cassandra_data
+target/
+project/target
+
+*.class
+*.log
+
+.bloop
+.history
+.metals
+.vscode
+
+metals.sbt
+
+.DS_Store
