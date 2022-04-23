@@ -43,25 +43,25 @@ object KafkaStreamProcessor {
 
     val makeUUID = udf(() => Uuids.timeBased().toString)
 
-    val summaryWithIDs = playerScoreEvent
+    val playerScoreDataFrame = playerScoreEvent
       .withColumn("id", makeUUID())
       .withColumnRenamed("playerId", "player_id")
       .withColumnRenamed("playerName", "player_name")
       .withColumnRenamed("playerScore", "player_score")
 
     // stream to console
-//    player.writeStream
+//    playerScoreEvent.writeStream
 //      .format("console")
 //      .outputMode("append")
 //      .start()
 //      .awaitTermination()
 
     // stream to cassandra
-    summaryWithIDs
+    playerScoreDataFrame
       .writeStream
       .trigger(Trigger.ProcessingTime("5 seconds"))
       .foreachBatch { (batchDF: DataFrame, batchID: Long) =>
-        println(s"Writing to Cassandra $batchID")
+        println(s"Writing to Cassandra batchId: $batchID, event: $batchDF")
         batchDF
           .write
           .cassandraFormat("multiplayer_score_event", "streaming")
